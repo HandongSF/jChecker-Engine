@@ -1,4 +1,4 @@
-package edu.isel.csee.jchecker2_0.diagram.utils;
+package edu.isel.csee.jchecker.diagram.utils;
 
 public class Box {
     private int x;

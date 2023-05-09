@@ -1,4 +1,4 @@
-package edu.isel.csee.jchecker2_0.diagram.parser.collector;
+package edu.isel.csee.jchecker.diagram.parser.collector;
 
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;

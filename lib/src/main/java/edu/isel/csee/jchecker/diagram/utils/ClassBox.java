@@ -1,9 +1,9 @@
-package edu.isel.csee.jchecker2_0.diagram.utils;
+package edu.isel.csee.jchecker.diagram.utils;
 
 import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
-import edu.isel.csee.jchecker2_0.diagram.parser.JavaParser;
+import edu.isel.csee.jchecker.diagram.parser.JavaParser;
 
 import java.util.ArrayList;
 import java.util.List;

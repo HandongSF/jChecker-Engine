@@ -1,14 +1,14 @@
-package edu.isel.csee.jchecker2_0.diagram.parser;
+package edu.isel.csee.jchecker.diagram.parser;
 
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
-import edu.isel.csee.jchecker2_0.diagram.parser.collector.ClassCollector;
-import edu.isel.csee.jchecker2_0.diagram.parser.collector.ConstructorCollector;
-import edu.isel.csee.jchecker2_0.diagram.parser.collector.FieldCollector;
-import edu.isel.csee.jchecker2_0.diagram.parser.collector.MethodCollector;
+import edu.isel.csee.jchecker.diagram.parser.collector.ClassCollector;
+import edu.isel.csee.jchecker.diagram.parser.collector.ConstructorCollector;
+import edu.isel.csee.jchecker.diagram.parser.collector.FieldCollector;
+import edu.isel.csee.jchecker.diagram.parser.collector.MethodCollector;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

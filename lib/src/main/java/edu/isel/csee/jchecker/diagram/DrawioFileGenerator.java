@@ -1,11 +1,10 @@
-package edu.isel.csee.jchecker2_0.diagram;
+package edu.isel.csee.jchecker.diagram;
 
 import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
-
-import edu.isel.csee.jchecker2_0.diagram.parser.JavaParser;
-import edu.isel.csee.jchecker2_0.diagram.utils.ClassBox;
+import edu.isel.csee.jchecker.diagram.parser.JavaParser;
+import edu.isel.csee.jchecker.diagram.utils.ClassBox;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -13,10 +12,12 @@ import org.w3c.dom.Element;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.*;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.*;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
