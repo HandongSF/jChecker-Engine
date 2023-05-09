@@ -2,6 +2,7 @@ package edu.isel.csee.jchecker.statics;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Collections;
 
 import com.google.gson.JsonObject;
 import org.eclipse.jdt.core.dom.*;
@@ -19,6 +20,7 @@ public class ImplementationChecker extends ASTChecker {
 	private List<String> superClasses = new ArrayList<>();
 	private List<String> threads = new ArrayList<>();
 	private List<String> expressions = new ArrayList<>();
+	private List<String> methodInvocations = new ArrayList<>();
 
 	private ArrayList<String> customExcViolations = new ArrayList<>();
 	private ArrayList<String> customStructViolations = new ArrayList<>();
@@ -28,11 +30,13 @@ public class ImplementationChecker extends ASTChecker {
 	private boolean countViolation = false;
 	private boolean customExcViolation = false;
 	private boolean customStructViolation = false;
+	private boolean reqMethodViolation = false;
 	private boolean isBuild = false;
 	private boolean isRunnable = false;
 
 	private int customExcViolationCount = 0;
 	private int customStructViolationCount = 0;
+	private int reqMethodViolationCount = 0;
 	private String result = "";
 
 	private int numOfEnhancedForStatement = 0;
@@ -129,6 +133,22 @@ public class ImplementationChecker extends ASTChecker {
 
 				 policy.deduct_point(deducted);
 			}
+
+			if (policy.getReqMethod() != null && !policy.getReqMethod().isEmpty()) {
+				item = new JsonObject();
+				item.addProperty("violation", reqMethodViolation);
+				item.addProperty("violationCount", reqMethodViolationCount);
+
+				deducted = policy.getMethod_deduct_point() * (double) reqMethodViolationCount;
+				if (deducted > policy.getMethod_max_deduct()) {
+					deducted = policy.getMethod_max_deduct();
+				}
+
+				item.addProperty("deductedPoint", deducted);
+				scoresheet.add("methods", item);
+
+				policy.deduct_point(deducted);
+			}
 		} else {
 			if (policy.isCount()) {
 				item = new JsonObject();
@@ -181,6 +201,17 @@ public class ImplementationChecker extends ASTChecker {
 
 				policy.deduct_point(policy.getCustomStr_max_deduct());
 			}
+
+			if (policy.getReqMethod() != null && !policy.getReqMethod().isEmpty()) {
+				item = new JsonObject();
+				item.addProperty("violation", true);
+				item.addProperty("violationCount", policy.getReqMethod().size());
+
+				item.addProperty("deductedPoint", policy.getMethod_max_deduct());
+				scoresheet.add("methods", item);
+
+				policy.deduct_point(policy.getMethod_max_deduct());
+			}
 		}
 
 		return scoresheet;
@@ -192,6 +223,7 @@ public class ImplementationChecker extends ASTChecker {
 			getClassNames(unit);
 			getInstances(unit);
 			getCountInfo(unit);
+			getMethodInvocation(unit);
 		}
 	}
 
@@ -217,6 +249,10 @@ public class ImplementationChecker extends ASTChecker {
 
 		if (policy.getReqCusStruct() != null && !policy.getReqCusStruct().isEmpty()) {
 			testCustomStructure();
+		}
+
+		if (policy.getReqMethod() != null && !policy.getReqMethod().isEmpty()) {
+			testMethods();
 		}
 	}
 
@@ -353,6 +389,27 @@ public class ImplementationChecker extends ASTChecker {
 		}
 	}
 
+	private void testMethods() {
+		int index = 0;
+
+		ArrayList<Integer> methodCounts = policy.getReqMethodCount();
+		ArrayList<String> methodClasses = policy.getReqMethodClass();
+
+		for (String each : policy.getReqMethod()) {
+			String reqFullyQualified = methodClasses.get(index) + "." + each;
+
+			int count = Collections.frequency(methodInvocations, reqFullyQualified);
+
+			if (count < methodCounts.get(index)) {
+				System.out.println("\t(X) " + count + " < " + methodCounts.get(index) + ": " + reqFullyQualified);
+				reqMethodViolation = true;
+				reqMethodViolationCount ++;
+			}
+
+			index ++;
+		}
+	}
+
 	private void getInstances(CompilationUnit unit) {
 		try {
 			unit.accept(new ASTVisitor() {
@@ -474,5 +531,27 @@ public class ImplementationChecker extends ASTChecker {
 		}
 
 		return expressions;
+	}
+
+	public void getMethodInvocation(CompilationUnit unit) {
+		try {
+			unit.accept(new ASTVisitor() {
+				@Override
+				public boolean visit(MethodInvocation node) {
+					IMethodBinding methodBinding = node.resolveMethodBinding();
+					String className = methodBinding.getDeclaringClass().getQualifiedName();
+
+					String methodName = node.getName().getIdentifier();
+
+					String fullyQualifiedName = className + "." + methodName;
+
+					methodInvocations.add(fullyQualifiedName);
+
+					return super.visit(node);
+				}
+			});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

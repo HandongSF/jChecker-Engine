@@ -1,6 +1,7 @@
 package edu.isel.csee.jchecker.statics;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import org.eclipse.jdt.core.dom.*;
 import com.google.gson.JsonObject;
@@ -15,6 +16,8 @@ public class OOPChecker extends ASTChecker {
 	private List<IMethodBinding> methods = new ArrayList<>();
 	private List<String> packages = new ArrayList<>();
 	private List<String> classes = new ArrayList<>();
+	private HashMap<String, List<ReturnStatement>> methodReturnGroupMap = new HashMap<>();
+	private HashMap<String, List<Assignment>> methodAssignmentGroupMap = new HashMap<>();
 
 	private ArrayList<String> classesViolations = new ArrayList<>();
 	private ArrayList<String> spcViolations = new ArrayList<>();
@@ -297,6 +300,8 @@ public class OOPChecker extends ASTChecker {
 			CompilationUnit unit = (CompilationUnit) parserSetProperties(each, unitName, filePath, libPath, isBuild).createAST(null);
 
 			if (policy.isEncaps()){
+				getReturnStatements(unit);
+				getAssignments(unit);
 				testEncapsulation(unit);
 			}
 
@@ -484,32 +489,156 @@ public class OOPChecker extends ASTChecker {
 			unit.accept(new ASTVisitor() {
 				@Override
 				public boolean visit(TypeDeclaration node) {
-					int public_count = 0;
-
 					if (!policy.getReqClass().contains(node.resolveBinding().getQualifiedName())){
 						return false;
 					}
 
-					for (FieldDeclaration eachField : node.getFields()){
-						if ((eachField.getModifiers() & Modifier.PRIVATE) <= 0){
-							ecpViolation = true;
+					for (FieldDeclaration eachField : node.getFields()) {
+						if ((eachField.getModifiers() & Modifier.FINAL) > 0) {
+							continue;
 						}
-					}
 
-					for (MethodDeclaration eachMethod : node.getMethods()){
-						if ((eachMethod.getModifiers() & Modifier.PUBLIC) > 0){
-							public_count ++;
+						// Get field name
+						VariableDeclarationFragment fieldFragment = (VariableDeclarationFragment) eachField.fragments().get(0);
+						String fieldName = fieldFragment.getName().getIdentifier();
+
+						// Private field
+						if ((eachField.getModifiers() & Modifier.PRIVATE) > 0) {
+							boolean hasGetter = false;
+							boolean hasSetter = false;
+
+							// Check the method (getter & setter)
+							for (MethodDeclaration eachMethod : node.getMethods()) {
+								// Check the public method
+								if ((eachMethod.getModifiers() & Modifier.PUBLIC) > 0) {
+									String methodName = eachMethod.getName().getIdentifier();
+
+									// Check the return statement (for the getter method)
+									if (methodReturnGroupMap.containsKey(methodName)) {
+										for (ReturnStatement returnStatement : methodReturnGroupMap.get(methodName)) {
+											Expression expression = returnStatement.getExpression();
+
+											if (expression instanceof SimpleName && ((SimpleName) expression).getIdentifier().equals(fieldName)
+													|| expression instanceof FieldAccess && ((FieldAccess) expression).getName().getIdentifier().equals(fieldName)
+													|| expression instanceof QualifiedName && ((QualifiedName) expression).getName().getIdentifier().equals(fieldName)) {
+												System.out.println("(O) Private field has getter (return value): " + fieldName);
+												hasGetter = true;
+											}
+										}
+									}
+
+									// Check the assignment statement (for the setter method & constructor)
+									if (methodAssignmentGroupMap.containsKey(methodName)) {
+										for (Assignment assignment : methodAssignmentGroupMap.get(methodName)) {
+											Expression leftHandSide = assignment.getLeftHandSide();
+
+											if (leftHandSide.toString().equals(fieldName) || leftHandSide.toString().equals("this." + fieldName)) {
+												if (eachMethod.isConstructor()) {
+													System.out.println("(O) Private field has constructor: " + fieldName);
+													hasSetter = true;
+												} else {
+													System.out.println("(O) Private field has setter (assignment): " + fieldName);
+													hasSetter = true;
+												}
+											}
+										}
+									}
+								}
+							}
+
+							if (!hasGetter || !hasSetter ) {
+								System.out.println("(X) Private field does not have getter, setter (constructor): " + fieldName);
+								ecpViolation = true;
+							}
+
+						} else if ((eachField.getModifiers() & Modifier.PUBLIC) > 0) {
+							if ((eachField.getModifiers() & Modifier.STATIC) <= 0) {
+								System.out.println("(X) Public field is not static: " + fieldName);
+								ecpViolation = true;
+							}
+						} else {
+							if ((eachField.getModifiers() & Modifier.PROTECTED) <= 0) {
+								System.out.println("(X) Field is "  + eachField.getModifiers() + ": " + fieldName);
+								ecpViolation = true;
+							}
 						}
-					}
-
-					if (public_count == 0){
-						ecpViolation = true;
 					}
 
 					return super.visit(node);
 				}
 			});
+
 		} catch (Exception e){
+			e.printStackTrace();
+		}
+	}
+
+	private void getReturnStatements(CompilationUnit unit) {
+		try {
+			unit.accept(new ASTVisitor() {
+				@Override
+				public boolean visit(ReturnStatement node) {
+					List<ReturnStatement> returnStatements;
+
+					ASTNode parent = node.getParent();
+					while (parent != null) {
+						if (parent.getNodeType() == ASTNode.METHOD_DECLARATION) {
+							MethodDeclaration method = (MethodDeclaration) parent;
+							String methodName = method.getName().getIdentifier();
+
+							if (!methodReturnGroupMap.containsKey(methodName)) {
+								returnStatements = new ArrayList<>();
+							} else {
+								returnStatements = methodReturnGroupMap.get(methodName);
+							}
+
+							returnStatements.add(node);
+							methodReturnGroupMap.put(methodName, returnStatements);
+
+							break;
+						}
+						parent = parent.getParent();
+					}
+
+					return super.visit(node);
+				}
+			});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void getAssignments(CompilationUnit unit) {
+		try {
+			unit.accept(new ASTVisitor() {
+				@Override
+				public boolean visit(Assignment node) {
+					List<Assignment> assignments;
+
+					ASTNode parent = node.getParent();
+					while (parent != null) {
+						if (parent.getNodeType() == ASTNode.METHOD_DECLARATION) {
+							MethodDeclaration method = (MethodDeclaration) parent;
+							String methodName = method.getName().getIdentifier();
+
+							if (!methodAssignmentGroupMap.containsKey(methodName)) {
+								assignments = new ArrayList<>();
+							} else {
+								assignments = methodAssignmentGroupMap.get(methodName);
+							}
+
+							assignments.add(node);
+							methodAssignmentGroupMap.put(methodName, assignments);
+
+							break;
+						}
+						parent = parent.getParent();
+					}
+
+					return super.visit(node);
+				}
+			});
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
