@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 public class GradleStage implements IGradeStage {
 	@Override
@@ -66,6 +67,14 @@ public class GradleStage implements IGradeStage {
 			builder.directory(new File(dpath));
 			process = builder.start();
 
+			// Wait for the process to complete for 20 seconds
+			if (!process.waitFor(20, TimeUnit.SECONDS)) {
+				// Timeout - destroy the process.
+				process.destroy();
+
+				return false;
+			}
+
 			stdout = new BufferedReader(new InputStreamReader(process.getInputStream(), "UTF-8"));
 
 			StringBuffer sb = new StringBuffer();
@@ -88,9 +97,9 @@ public class GradleStage implements IGradeStage {
 			}
 
 			if (result) {
-				System.out.println("\n--> correct\n");
+				System.out.println("\n--> (O) correct\n");
 			} else {
-				System.out.println("\n--> incorrect\n");
+				System.out.println("\n--> (X) incorrect\n");
 			}
 
 			process.waitFor();
