@@ -16,6 +16,8 @@ public class EvaluationSchemeMapper {
 	private ArrayList<String> reqClass = null;
 	private ArrayList<String> reqFilePath = null;
 	private ArrayList<String> reqMethod = null;
+	private ArrayList<Integer> reqMethodCount = null;
+	private ArrayList<String> reqMethodClass = null;
 	private ArrayList<String> reqCustExc = null;
 	private ArrayList<String> reqCusStruct = null;
 	private ArrayList<String> overriding = null;
@@ -42,6 +44,7 @@ public class EvaluationSchemeMapper {
 	private double runtime_deduct_point = 0.0D;
 	private double package_deduct_point = 0.0D;
 	private double class_deduct_point = 0.0D;
+	private double method_deduct_point = 0.0D;
 	private double customExc_deduct_point = 0.0D;
 	private double customStr_deduct_point = 0.0D;
 	private double spc_deduct_point = 0.0D;
@@ -56,6 +59,7 @@ public class EvaluationSchemeMapper {
 	private double runtime_max_deduct = 0.0D;
 	private double package_max_deduct = 0.0D;
 	private double class_max_deduct = 0.0D;
+	private double method_max_deduct = 0.0D;
 	private double customExc_max_deduct = 0.0D;
 	private double customStr_max_deduct = 0.0D;
 	private double spc_max_deduct = 0.0D;
@@ -66,6 +70,8 @@ public class EvaluationSchemeMapper {
 	private int methodCount;
 	private int fieldCount;
 	private int enForCount;
+
+	private int feedbackLevel = 1;
 
 
 	public String getDueDate() {
@@ -204,6 +210,14 @@ public class EvaluationSchemeMapper {
 		this.reqMethod = reqMethod;
 	}
 
+	public ArrayList<Integer> getReqMethodCount() { return reqMethodCount; }
+
+	public void setReqMethodCount(ArrayList<Integer> reqMethodCount) { this.reqMethodCount = reqMethodCount; }
+
+	public ArrayList<String> getReqMethodClass() { return reqMethodClass; }
+
+	public void setReqMethodClass(ArrayList<String> reqMethodClass) { this.reqMethodClass = reqMethodClass; }
+
 	public ArrayList<String> getReqCustExc() {
 		return reqCustExc;
 	}
@@ -300,6 +314,10 @@ public class EvaluationSchemeMapper {
 	public void setClass_deduct_point(double class_deduct_point) {
 		this.class_deduct_point = class_deduct_point;
 	}
+
+	public double getMethod_deduct_point() { return method_deduct_point; }
+
+	public void setMethod_deduct_point(double method_deduct_point) { this.method_deduct_point = method_deduct_point; }
 
 	public ArrayList<String> getReqFilePath() {
 		return reqFilePath;
@@ -413,6 +431,10 @@ public class EvaluationSchemeMapper {
 		this.class_max_deduct = class_max_deduct;
 	}
 
+	public double getMethod_max_deduct() { return method_max_deduct; }
+
+	public void setMethod_max_deduct(double method_max_deduct) { this.method_max_deduct = method_max_deduct; }
+
 	public double getCustomExc_max_deduct() {
 		return customExc_max_deduct;
 	}
@@ -516,4 +538,8 @@ public class EvaluationSchemeMapper {
 	public void setBTool(boolean isBTool) {
 		this.isBTool = isBTool;
 	}
+
+	public int getFeedbackLevel() { return feedbackLevel; }
+
+	public void setFeedbackLevel(int feedbackLevel) { this.feedbackLevel = feedbackLevel; }
 }

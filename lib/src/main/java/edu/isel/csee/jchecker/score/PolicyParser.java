@@ -17,6 +17,7 @@ public class PolicyParser {
 			policyTable.setPoint(policy.get("point").getAsDouble());
 			policyTable.setDirect(policy.get("feedback").getAsBoolean());
 			policyTable.setDueDate(policy.get("dueDate").getAsString());
+			policyTable.setFeedbackLevel(policy.get("feedbackLevel").getAsInt());
 
 			obj = new Gson().fromJson(policy.get("compiled"), JsonObject.class);
 			if (obj.get("state").getAsBoolean()) {
@@ -54,6 +55,18 @@ public class PolicyParser {
 				}.getType()));
 				policyTable.setClass_deduct_point(obj.get("deductPoint").getAsDouble());
 				policyTable.setClass_max_deduct(obj.get("maxDeduct").getAsDouble());
+			}
+
+			obj = new Gson().fromJson(policy.get("methods"), JsonObject.class);
+			if (obj.get("state").getAsBoolean()) {
+				policyTable.setReqMethod(new Gson().fromJson(obj.get("required"), new TypeToken<ArrayList<String>>() {
+				}.getType()));
+				policyTable.setReqMethodCount(new Gson().fromJson(obj.get("count"), new TypeToken<ArrayList<Integer>>() {
+				}.getType()));
+				policyTable.setReqMethodClass(new Gson().fromJson(obj.get("classes"), new TypeToken<ArrayList<String>>() {
+				}.getType()));
+				policyTable.setMethod_deduct_point(obj.get("deductPoint").getAsDouble());
+				policyTable.setMethod_max_deduct(obj.get("maxDeduct").getAsDouble());
 			}
 
 			obj = new Gson().fromJson(policy.get("customException"), JsonObject.class);
