@@ -44,6 +44,7 @@ public class GradleStage implements IGradeStage {
 			state = flag ? -1 : 0;
 
 			process.waitFor();
+			stdout.close();
 			process.destroy();
 
 		} catch (Exception e) {
