@@ -109,7 +109,7 @@ public class JavaStage implements IGradeStage {
 
 		command.add("bash");
 		command.add("-c");
-		command.add("javac -encoding UTF-8 -Xlint:deprecation -g:none -d bin @srclist.txt");
+		command.add("javac -encoding UTF-8 -Xlint:deprecation -d bin @srclist.txt");
 
 		return command;
 	}
