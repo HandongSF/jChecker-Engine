@@ -20,6 +20,30 @@ repositories {
 sourceCompatibility = 14
 targetCompatibility = 14
 
+// Added this block to avoid dynamic version update for dependencies. Since dynamic version update may cause compile version issues.
+// this problem has been identified in 2023. Legacy packages are compiled with recent java version.
+// For example, https://mvnrepository.com/artifact/org.eclipse.jdt/org.eclipse.jdt.core/3.24.0 this version uses 3.31 which is cmopiled by using recent JDK,
+// but to avoid version 58 and 6x issues, we need to use the legacy version of the runtime packages like 3.19.0 rathenr than 3.31.0
+configurations.all {
+    resolutionStrategy {
+        force 'org.eclipse.platform:org.eclipse.core.runtime:3.31.0', 'org.eclipse.platform:org.eclipse.core.runtime:3.19.0'
+
+        force 'org.eclipse.platform:org.eclipse.equinox.common:3.19.0', 'org.eclipse.platform:org.eclipse.equinox.common:3.12.0'
+
+        force 'org.eclipse.platform:org.eclipse.equinox.preferences:3.11.0', 'org.eclipse.platform:org.eclipse.equinox.preferences:3.7.0'
+
+        ////  implementation group: 'org.eclipse.platform', name: 'org.eclipse.core.resources', version: '3.13.800'i
+        force 'org.eclipse.platform:org.eclipse.core.resources:3.20.100', 'org.eclipse.platform:org.eclipse.core.resources:3.13.0'
+
+        force 'org.eclipse.platform:org.eclipse.core.jobs:3.15.200', 'org.eclipse.platform:org.eclipse.core.jobs:3.10.800'
+
+        force 'org.eclipse.platform:org.eclipse.core.contenttype:3.9.300', 'org.eclipse.platform:org.eclipse.core.contenttype:3.7.800'
+        //// https://docs.gradle.org/current/userguide/resolution_strategy_tuning.html#reproducible-resolution
+        ////failOnDynamicVersions()
+
+    }
+}
+
 dependencies {
     // Use JUnit test framework.
     testImplementation 'junit:junit:4.13'
