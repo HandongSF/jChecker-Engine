@@ -353,8 +353,8 @@ public class ImplementationChecker extends ASTChecker {
 	 */
 	private void testCustomStructure() {
 		for (String each : policy.getReqCusStruct()){
-			if (classes.contains(each)){
-				if (!instances.contains(each)){
+			if (instances.contains(each)){
+                                if (each.indexOf("<")>0 && !classes.contains(each.substring(0,each.indexOf("<")))){
 					customStructViolations.add(each);
 					customStructViolationCount ++;
 					customStructViolation = true;
