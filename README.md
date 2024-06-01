@@ -4,13 +4,21 @@
 
 
 
-Documentation
-------------
-
-
 
 Contributing
 ---------
 
 
+License
+---
 
+Contact Information
+---
+
+
+Release Note
+---
+
+
+Documentation and References
+------------
