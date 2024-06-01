@@ -11,6 +11,7 @@ Contributing
 
 License
 ---
+[Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0)을 표준으로 사용합니다.
 
 Contact Information
 ---
