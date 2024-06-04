@@ -7,15 +7,15 @@ jChecker는 Abstract Syntax Tree(ASF)를 이용하여 자바의 객체지향프�
 
 Contributing
 ---------
-
+어떤 기여도 모두 환영합니다. 모든 프로세스는 HSF 소통 도구(Discord)를 통해 진행하게 됩니다.
 
 License
 ---
 [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0)을 표준으로 사용합니다.
 
-Usage
+Build
 ---
-
+gradle build를 실행하고 나면 ../jChecker-2.0-Engine/lib/build/llibs/lib.jar 파일이 생성됩니다.
 
 Release Note
 ---
