@@ -16,6 +16,8 @@
  * limitations under the License.
  */
 
+
+
 package edu.isel.csee.jchecker2_0.core.stage;
 
 import java.io.BufferedReader;
