@@ -32,78 +32,60 @@ plugins {
 
 repositories {
     // Use JCenter for resolving dependencies.
-    jcenter()
+    // since JCenter has ended its servicing, I have changed it into use of mavenCentral
+    mavenCentral()
 }
 
-sourceCompatibility = 14
-targetCompatibility = 14
-
-// Added this block to avoid dynamic version update for dependencies. Since dynamic version update may cause compile version issues.
-// this problem has been identified in 2023. Legacy packages are compiled with recent java version.
-// For example, https://mvnrepository.com/artifact/org.eclipse.jdt/org.eclipse.jdt.core/3.24.0 this version uses 3.31 which is cmopiled by using recent JDK,
-// but to avoid version 58 and 6x issues, we need to use the legacy version of the runtime packages like 3.19.0 rathenr than 3.31.0
-configurations.all {
-    resolutionStrategy {
-        force 'org.eclipse.platform:org.eclipse.core.runtime:3.31.0', 'org.eclipse.platform:org.eclipse.core.runtime:3.19.0'
-
-        force 'org.eclipse.platform:org.eclipse.equinox.common:3.19.0', 'org.eclipse.platform:org.eclipse.equinox.common:3.12.0'
-
-        force 'org.eclipse.platform:org.eclipse.equinox.preferences:3.11.0', 'org.eclipse.platform:org.eclipse.equinox.preferences:3.7.0'
-
-        ////  implementation group: 'org.eclipse.platform', name: 'org.eclipse.core.resources', version: '3.13.800'i
-        force 'org.eclipse.platform:org.eclipse.core.resources:3.20.100', 'org.eclipse.platform:org.eclipse.core.resources:3.13.0'
-
-        force 'org.eclipse.platform:org.eclipse.core.jobs:3.15.200', 'org.eclipse.platform:org.eclipse.core.jobs:3.10.800'
-
-        force 'org.eclipse.platform:org.eclipse.core.contenttype:3.9.300', 'org.eclipse.platform:org.eclipse.core.contenttype:3.7.800'
-        //// https://docs.gradle.org/current/userguide/resolution_strategy_tuning.html#reproducible-resolution
-        ////failOnDynamicVersions()
-
-    }
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
+
+// configurations.all block has deleted
 
 dependencies {
-    // Use JUnit test framework.
-    testImplementation 'junit:junit:4.13'
+    // https://mvnrepository.com/artifact/junit/junit
+    testImplementation("junit:junit:4.13.2")
 
     // This dependency is exported to consumers, that is to say found on their compile classpath.
     api 'org.apache.commons:commons-math3:3.6.1'
 
     // https://mvnrepository.com/artifact/com.google.guava/guava
-    implementation group: 'com.google.guava', name: 'guava', version: '30.0-jre'
+    implementation("com.google.guava:guava:33.4.8-jre")
 
     // https://mvnrepository.com/artifact/org.eclipse.jdt/org.eclipse.jdt.core
-    implementation group: 'org.eclipse.jdt', name: 'org.eclipse.jdt.core', version: '3.24.0'
+    implementation("org.eclipse.jdt:org.eclipse.jdt.core:3.42.0")
 
-	// https://mvnrepository.com/artifact/com.google.code.gson/gson
-    implementation group: 'com.google.code.gson', name: 'gson', version: '2.9.0'
+    // https://mvnrepository.com/artifact/com.google.code.gson/gson
+    implementation("com.google.code.gson:gson:2.13.1")
 
 
 
     // https://mvnrepository.com/artifact/commons-cli/commons-cli
-    implementation group: 'commons-cli', name: 'commons-cli', version: '1.4'
+    implementation("commons-cli:commons-cli:1.9.0")
 
     // https://mvnrepository.com/artifact/commons-io/commons-io
-    implementation group: 'commons-io', name: 'commons-io', version: '2.11.0'
+    implementation("commons-io:commons-io:2.20.0")
 
 
     // https://mvnrepository.com/artifact/com.github.javaparser/javaparser-symbol-solver-core
-    implementation group: 'com.github.javaparser', name: 'javaparser-symbol-solver-core', version: '3.24.2'
+    implementation("com.github.javaparser:javaparser-symbol-solver-core:3.26.4")
 }
 
 task fatJar(type: Jar) {
     manifest {
         attributes 'Main-Class': 'edu.isel.csee.javagrader.grader.Main'
     }
-    baseName = project.name
-    
+    archiveBaseName = project.name
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
     from (configurations.runtimeClasspath.collect { entry -> zipTree(entry) }) {
         exclude 'META-INF/MANIFEST.MF'
         exclude 'META-INF/*.SF'
         exclude 'META-INF/*.DSA'
         exclude 'META-INF/*.RSA'
     }
-    with jar
 }
 
 /*
@@ -112,3 +94,8 @@ application {
     mainClass = 'edu.isel.csee.jchecker.GradeMain'
 }
 */
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs = ['-Xlint:all']
+}
+

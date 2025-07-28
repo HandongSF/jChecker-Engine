@@ -135,7 +135,7 @@ public class JavaStage implements IGradeStage {
 	 * @return command
 	 */
 	public ArrayList<String> getTest(String packagePath, String input, boolean isTest) {
-		ArrayList<String> command = new ArrayList();
+		ArrayList<String> command = new ArrayList<>();
 
 		command.add("bash");
 		command.add("-c");

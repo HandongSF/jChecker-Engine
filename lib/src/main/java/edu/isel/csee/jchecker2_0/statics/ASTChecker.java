@@ -45,7 +45,7 @@ public class ASTChecker {
 
 		this.filePath = filePath;
 
-		parser = ASTParser.newParser(AST.JLS15);
+		parser = ASTParser.newParser(AST.JLS21);
 		parser.setUnitName("any_name");
 		parser.setKind(ASTParser.K_COMPILATION_UNIT);
 		parser.setSource(content);
@@ -88,7 +88,7 @@ public class ASTChecker {
 	public ASTParser parserSetProperties(String source) {
 		char[] content = source.toCharArray();
 
-		parser = ASTParser.newParser(AST.JLS15);
+		parser = ASTParser.newParser(AST.JLS21);
 		parser.setUnitName("any_name");
 		parser.setKind(ASTParser.K_COMPILATION_UNIT);
 		parser.setSource(content);
