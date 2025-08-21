@@ -92,7 +92,7 @@ task fatJar(type: Jar) {
 
 application {
     // Define the main class for the application.
-    mainClass = 'edu.isel.csee.jchecker.GradeMain'
+    mainClass = 'edu.isel.csee.jchecker2_0.GradeMain'
 }
 
 
