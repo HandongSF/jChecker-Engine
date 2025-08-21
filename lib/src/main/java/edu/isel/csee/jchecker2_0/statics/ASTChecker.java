@@ -22,14 +22,14 @@ public class ASTChecker {
 		char[] content = source.toCharArray();
 		this.filePath = filePath;
 
-		parser = ASTParser.newParser(AST.JLS20);
+		parser = ASTParser.newParser(AST.JLS21);
 		parser.setUnitName(unit != null ? unit : "any_name");
 		parser.setKind(ASTParser.K_COMPILATION_UNIT);
 		parser.setSource(content);
 
 		// JDK 21 기준 컴파일러 옵션
 		Map<String, String> options = JavaCore.getOptions();
-		options.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_20);
+		options.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_21);
 		options.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_21);
 		options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_21);
 
