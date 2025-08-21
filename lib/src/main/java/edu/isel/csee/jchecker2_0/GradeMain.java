@@ -51,7 +51,7 @@ public class GradeMain {
             }
 
             // preprocessing
-            opath = "/Users/seojueun/assignments/";
+            // opath = "/Users/seojueun/assignments/";
             new Extractor().unzip(ipath, opath);
 
             // grading policy
@@ -135,6 +135,7 @@ public class GradeMain {
 
             ipath = cmd.getOptionValue("i");
             jpath = cmd.getOptionValue("j");
+            opath = cmd.getOptionValue("o");
             help = cmd.hasOption("h");
 
         } catch (Exception e) {
@@ -163,6 +164,13 @@ public class GradeMain {
                 .desc("Set an policy file for grading")
                 .hasArg()
                 .argName("JSON file path")
+                .required()
+                .build());
+
+        options.addOption(Option.builder("o").longOpt("output")
+                .desc("Set an output directory path for grading")
+                .hasArg()
+                .argName("Output path")
                 .required()
                 .build());
 

@@ -42,9 +42,9 @@ import edu.isel.csee.jchecker2_0.statics.utils.FileGenerationChecker;
  */
 public class CoreGrader {
 	private boolean flag = false;
-	private ArrayList<String> inputViolations = new ArrayList();
-	private ArrayList<String> checksumViolations = new ArrayList();
-	private List<String> srcList = new ArrayList();
+	private ArrayList<String> inputViolations = new ArrayList<>();
+	private ArrayList<String> checksumViolations = new ArrayList<>();
+	private List<String> srcList = new ArrayList<>();
 	private List<String> srcPathList = new ArrayList<>();
 	private int iViolationCount = 0;
 	private int cViolationCount = 0;
@@ -66,7 +66,7 @@ public class CoreGrader {
 		workpath = path;
 
 		EvaluationSchemeMapper scheme = new EvaluationSchemeMapper();
-		JsonObject policyObject = (JsonObject)(new Gson()).fromJson(policy, JsonObject.class);
+		JsonObject policyObject = new Gson().fromJson(policy, JsonObject.class);
 		JsonObject score = new JsonObject();
 		EntireContentParser source = new EntireContentParser();
 
@@ -283,7 +283,7 @@ public class CoreGrader {
 	 * @return
 	 */
 	private String findFilePath(String dpath, String findPath, String fileName) {
-		ArrayList<String> command = new ArrayList();
+		ArrayList<String> command = new ArrayList<>();
 
 		command.add("bash");
 		command.add("-c");

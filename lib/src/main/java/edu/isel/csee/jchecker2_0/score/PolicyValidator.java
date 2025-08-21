@@ -7,7 +7,7 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,6 +19,7 @@
 package edu.isel.csee.jchecker2_0.score;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
@@ -66,43 +67,50 @@ public class PolicyValidator {
      */
     public void validator(JsonObject policy) {
         // validation for classes deduct point
-        JsonObject obj = new Gson().fromJson(policy.get("classes"), JsonObject.class);
-        if (!obj.has("deductPoint")) {
-            obj.addProperty("deductPoint", 0.0);
-            policy.add("classes", obj);
-        }
-        if (!obj.has("maxDeduct")) {
-            obj.addProperty("maxDeduct", 0.0);
-            policy.add("classes", obj);
+        JsonElement classesElement = policy.get("classes");
+        if (classesElement != null && !classesElement.isJsonNull()) {
+            JsonObject obj = classesElement.getAsJsonObject();
+            if (!obj.has("deductPoint")) {
+                obj.addProperty("deductPoint", 0.0);
+            }
+            if (!obj.has("maxDeduct")) {
+                obj.addProperty("maxDeduct", 0.0);
+            }
         }
 
         // validation for checksum data (oracle state is true)
-        obj = new Gson().fromJson(policy.get("oracle"), JsonObject.class);
-        if (!obj.get("state").toString().equals("false")) {
-            inputs = new Gson().fromJson(obj.get("input"), new TypeToken<ArrayList<String>>() {
-            }.getType());
-            checksums = new Gson().fromJson(obj.get("checksum"), new TypeToken<ArrayList<String>>() {
-            }.getType());
+        JsonElement oracleElement = policy.get("oracle");
+        if (oracleElement != null && !oracleElement.isJsonNull()) {
+            JsonObject obj = oracleElement.getAsJsonObject();
 
-            setHasChecksum(checksums);
-            // if we use checksum, the number of checksum data is equal to input data size
-            if (getHasChecksum()) {
-                for (int i = 0; i < checksums.size(); i ++) {
-                    // replace null data to empty string
-                    if (checksums.get(i) == null) {
-                        checksums.set(i, "");
+            if (obj.has("state") && !obj.get("state").getAsString().equals("false")) {
+                inputs = new Gson().fromJson(obj.get("input"), new TypeToken<ArrayList<String>>() {
+                }.getType());
+                checksums = new Gson().fromJson(obj.get("checksum"), new TypeToken<ArrayList<String>>() {
+                }.getType());
+
+                if (inputs != null && checksums != null) {
+                    setHasChecksum(checksums);
+                    // if we use checksum, the number of checksum data is equal to input data size
+                    if (getHasChecksum()) {
+                        for (int i = 0; i < checksums.size(); i++) {
+                            // replace null data to empty string
+                            if (checksums.get(i) == null) {
+                                checksums.set(i, "");
+                            }
+                        }
+
+                        // #8 - input size > checksum size -> add some empty string in checksum data
+                        if (inputs.size() > checksums.size()) {
+                            while (inputs.size() != checksums.size()) {
+                                checksums.add("");
+                            }
+                        }
+
+                        policy.getAsJsonObject("oracle").remove("checksum"); // remove original checksum data
+                        policy.getAsJsonObject("oracle").add("checksum", (new Gson()).toJsonTree(checksums)); // add new
                     }
                 }
-
-                // #8 - input size > checksum size -> add some empty string in checksum data
-                if (inputs.size() > checksums.size()) {
-                    while (inputs.size() != checksums.size()) {
-                        checksums.add("");
-                    }
-                }
-
-                policy.getAsJsonObject("oracle").remove("checksum"); // remove original checksum data
-                policy.getAsJsonObject("oracle").add("checksum", (new Gson()).toJsonTree(checksums)); // add new
             }
         }
     }
