@@ -162,6 +162,13 @@ public class PolicyParser {
 
 	}
 
+	/**
+	 * Reads a boolean value safely from a policy JSON object
+	 * @param obj policy data Json Object
+	 * @param key key field name to read
+	 * @param defaultValue default value used when the field is missing or invalid
+	 * @return
+	 */
 	private boolean getBoolean(JsonObject obj, String key, boolean defaultValue) {
 		if (obj == null || !obj.has(key) || obj.get(key).isJsonNull()) {
 			return defaultValue;
@@ -174,6 +181,13 @@ public class PolicyParser {
 		}
 	}
 
+	/**
+	 * Reads a double value safely from a policy JSON object
+	 * @param obj policy data Json Object
+	 * @param key key field name to read
+	 * @param defaultValue default value used when the field is missing or invalid
+	 * @return
+	 */
 	private double getDouble(JsonObject obj, String key, double defaultValue) {
 		if (obj == null || !obj.has(key) || obj.get(key).isJsonNull()) {
 			return defaultValue;
@@ -186,6 +200,13 @@ public class PolicyParser {
 		}
 	}
 
+	/**
+	 * Reads an int value safely from a policy JSON object
+	 * @param obj policy data Json Object
+	 * @param key key field name to read
+	 * @param defaultValue default value used when the field is missing or invalid
+	 * @return
+	 */
 	private int getInt(JsonObject obj, String key, int defaultValue) {
 		if (obj == null || !obj.has(key) || obj.get(key).isJsonNull()) {
 			return defaultValue;
@@ -198,6 +219,14 @@ public class PolicyParser {
 		}
 	}
 
+	/**
+	 * Reads a list value safely from a policy JSON object
+	 * @param obj policy data Json Object
+	 * @param key key field name to read
+	 * @param type list an element type
+	 * @return
+	 * @param <T> list an element type
+	 */
 	private <T> ArrayList<T> getList(JsonObject obj, String key, TypeToken<ArrayList<T>> type) {
 		if (obj == null || !obj.has(key) || obj.get(key).isJsonNull()) {
 			return new ArrayList<>();
