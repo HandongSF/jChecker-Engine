@@ -34,7 +34,7 @@ public class PolicyParser {
 	 */
 	public void parse(EvaluationSchemeMapper policyTable, JsonObject policy) {
 		try {
-			JsonObject obj = null;
+			JsonObject obj;
 
 			policyTable.setToken(policy.get("token").getAsString());
 			policyTable.setItoken(policy.get("itoken").getAsString());
@@ -46,136 +46,196 @@ public class PolicyParser {
 			policyTable.setFeedbackLevel(policy.get("feedbackLevel").getAsInt());
 
 			obj = new Gson().fromJson(policy.get("compiled"), JsonObject.class);
-			if (obj.get("state").getAsBoolean()) {
+			if (getBoolean(obj, "state", false)) {
 				policyTable.setCompiled(true);
-				policyTable.setBTool(obj.get("buildTool").getAsBoolean());
-				policyTable.setCompiled_deduct_point(obj.get("deductPoint").getAsDouble());
+				policyTable.setBTool(getBoolean(obj, "buildTool", false));
+				policyTable.setCompiled_deduct_point(getDouble(obj, "deductPoint", 0.0));
 			}
 
 			obj = new Gson().fromJson(policy.get("oracle"), JsonObject.class);
-			if (obj.get("state").getAsBoolean()) {
+			if (getBoolean(obj, "state", false)) {
 				policyTable.setTest(true);
-				policyTable.setInputs(new Gson().fromJson(obj.get("input"), new TypeToken<ArrayList<String>>() {
-				}.getType()));
-				policyTable.setChecksums(new Gson().fromJson(obj.get("checksum"), new TypeToken<ArrayList<String>>() {
-				}.getType()));
-				policyTable.setOutputs(new Gson().fromJson(obj.get("output"), new TypeToken<ArrayList<String>>() {
-				}.getType()));
-				policyTable.setRuntime_deduct_point(obj.get("deductPoint").getAsDouble());
-				policyTable.setRuntime_max_deduct(obj.get("maxDeduct").getAsDouble());
-				policyTable.setReqFilePath(new Gson().fromJson(obj.get("filePath"), new TypeToken<ArrayList<String>>() {
-				}.getType()));
+				policyTable.setInputs(getList(obj, "input", new TypeToken<ArrayList<String>>(){}));
+				policyTable.setChecksums(getList(obj, "checksum", new TypeToken<ArrayList<String>>(){}));
+				policyTable.setOutputs(getList(obj, "output", new TypeToken<ArrayList<String>>(){}));
+				policyTable.setRuntime_deduct_point(getDouble(obj, "deductPoint", 0.0));
+				policyTable.setRuntime_max_deduct(getDouble(obj, "maxDeduct", 0.0));
+				policyTable.setReqFilePath(getList(obj, "filePath", new TypeToken<ArrayList<String>>(){}));
 			}
 
 			obj = new Gson().fromJson(policy.get("packages"), JsonObject.class);
-			if (obj.get("state").getAsBoolean()) {
-				policyTable.setPackageName(new Gson().fromJson(obj.get("required"), new TypeToken<ArrayList<String>>() {
-				}.getType()));
-				policyTable.setPackage_deduct_point(obj.get("deductPoint").getAsDouble());
-				policyTable.setPackage_max_deduct(obj.get("maxDeduct").getAsDouble());
+			if (getBoolean(obj, "state", false)) {
+				policyTable.setPackageName(getList(obj, "required", new TypeToken<ArrayList<String>>(){}));
+				policyTable.setPackage_deduct_point(getDouble(obj, "deductPoint", 0.0));
+				policyTable.setPackage_max_deduct(getDouble(obj, "maxDeduct", 0.0));
 			}
 
 			obj = new Gson().fromJson(policy.get("classes"), JsonObject.class);
-			if (obj.get("state").getAsBoolean()) {
-				policyTable.setReqClass(new Gson().fromJson(obj.get("required"), new TypeToken<ArrayList<String>>() {
-				}.getType()));
-				policyTable.setClass_deduct_point(obj.get("deductPoint").getAsDouble());
-				policyTable.setClass_max_deduct(obj.get("maxDeduct").getAsDouble());
+			if (getBoolean(obj, "state", false)) {
+				policyTable.setReqClass(getList(obj, "required", new TypeToken<ArrayList<String>>(){}));
+				policyTable.setClass_deduct_point(getDouble(obj, "deductPoint", 0.0));
+				policyTable.setClass_max_deduct(getDouble(obj, "maxDeduct", 0.0));
 			}
 
 			obj = new Gson().fromJson(policy.get("methods"), JsonObject.class);
-			if (obj.get("state").getAsBoolean()) {
-				policyTable.setReqMethod(new Gson().fromJson(obj.get("required"), new TypeToken<ArrayList<String>>() {
-				}.getType()));
-				policyTable.setReqMethodCount(new Gson().fromJson(obj.get("count"), new TypeToken<ArrayList<Integer>>() {
-				}.getType()));
-				policyTable.setReqMethodClass(new Gson().fromJson(obj.get("classes"), new TypeToken<ArrayList<String>>() {
-				}.getType()));
-				policyTable.setMethod_deduct_point(obj.get("deductPoint").getAsDouble());
-				policyTable.setMethod_max_deduct(obj.get("maxDeduct").getAsDouble());
+			if (getBoolean(obj, "state", false)) {
+				policyTable.setReqMethod(getList(obj, "required", new TypeToken<ArrayList<String>>(){}));
+				policyTable.setReqMethodCount(getList(obj, "count", new TypeToken<ArrayList<Integer>>(){}));
+				policyTable.setReqMethodClass(getList(obj, "classes", new TypeToken<ArrayList<String>>(){}));
+				policyTable.setMethod_deduct_point(getDouble(obj, "deductPoint", 0.0));
+				policyTable.setMethod_max_deduct(getDouble(obj, "maxDeduct", 0.0));
 			}
 
 			obj = new Gson().fromJson(policy.get("customException"), JsonObject.class);
-			if (obj.get("state").getAsBoolean()) {
-				policyTable.setReqCustExc(new Gson().fromJson(obj.get("required"), new TypeToken<ArrayList<String>>() {
-				}.getType()));
-				policyTable.setCustomExc_deduct_point(obj.get("deductPoint").getAsDouble());
-				policyTable.setCustomExc_max_deduct(obj.get("maxDeduct").getAsDouble());
+			if (getBoolean(obj, "state", false)) {
+				policyTable.setReqCustExc(getList(obj, "required", new TypeToken<ArrayList<String>>(){}));
+				policyTable.setCustomExc_deduct_point(getDouble(obj, "deductPoint", 0.0));
+				policyTable.setCustomExc_max_deduct(getDouble(obj, "maxDeduct", 0.0));
 			}
 
 			obj = new Gson().fromJson(policy.get("customStructure"), JsonObject.class);
-			if (obj.get("state").getAsBoolean()) {
-				policyTable.setReqCusStruct(new Gson().fromJson(obj.get("required"), new TypeToken<ArrayList<String>>() {
-				}.getType()));
-				policyTable.setCustomStr_deduct_point(obj.get("deductPoint").getAsDouble());
-				policyTable.setCustomStr_max_deduct(obj.get("maxDeduct").getAsDouble());
+			if (getBoolean(obj, "state", false)) {
+				policyTable.setReqCusStruct(getList(obj, "required", new TypeToken<ArrayList<String>>(){}));
+				policyTable.setCustomStr_deduct_point(getDouble(obj, "deductPoint", 0.0));
+				policyTable.setCustomStr_max_deduct(getDouble(obj, "maxDeduct", 0.0));
 			}
 
 			obj = new Gson().fromJson(policy.get("inheritSuper"), JsonObject.class);
-			if (obj.get("state").getAsBoolean()) {
-				policyTable.setSoriginClass(new Gson().fromJson(obj.get("origins"), new TypeToken<ArrayList<String>>() {
-				}.getType()));
-				policyTable.setSuperClass(new Gson().fromJson(obj.get("inherit"), new TypeToken<ArrayList<String>>() {
-				}.getType()));
-				policyTable.setSpc_deduct_point(obj.get("deductPoint").getAsDouble());
-				policyTable.setSpc_max_deduct(obj.get("maxDeduct").getAsDouble());
+			if (getBoolean(obj, "state", false)) {
+				policyTable.setSoriginClass(getList(obj, "origins", new TypeToken<ArrayList<String>>(){}));
+				policyTable.setSuperClass(getList(obj, "inherit", new TypeToken<ArrayList<String>>(){}));
+				policyTable.setSpc_deduct_point(getDouble(obj, "deductPoint", 0.0));
+				policyTable.setSpc_max_deduct(getDouble(obj, "maxDeduct", 0.0));
 			}
 
 			obj = new Gson().fromJson(policy.get("inheritInterface"), JsonObject.class);
-			if (obj.get("state").getAsBoolean()) {
-				policyTable.setIoriginClass(new Gson().fromJson(obj.get("origins"), new TypeToken<ArrayList<String>>() {
-				}.getType()));
-				policyTable.setInterfaceClass(new Gson().fromJson(obj.get("inherit"), new TypeToken<ArrayList<String>>() {
-				}.getType()));
-				policyTable.setItf_deduct_point(obj.get("deductPoint").getAsDouble());
-				policyTable.setItf_max_deduct(obj.get("maxDeduct").getAsDouble());
+			if (getBoolean(obj, "state", false)) {
+				policyTable.setIoriginClass(getList(obj, "origins", new TypeToken<ArrayList<String>>(){}));
+				policyTable.setInterfaceClass(getList(obj, "inherit", new TypeToken<ArrayList<String>>(){}));
+				policyTable.setItf_deduct_point(getDouble(obj, "deductPoint", 0.0));
+				policyTable.setItf_max_deduct(getDouble(obj, "maxDeduct", 0.0));
 			}
 
 			obj = new Gson().fromJson(policy.get("overriding"), JsonObject.class);
-			if (obj.get("state").getAsBoolean()) {
-				policyTable.setOverriding(new Gson().fromJson(obj.get("required"), new TypeToken<ArrayList<String>>() {
-				}.getType()));
-				policyTable.setOvr_deduct_point(obj.get("deductPoint").getAsDouble());
-				policyTable.setOvr_max_deduct(obj.get("maxDeduct").getAsDouble());
+			if (getBoolean(obj, "state", false)) {
+				policyTable.setOverriding(getList(obj, "required", new TypeToken<ArrayList<String>>(){}));
+				policyTable.setOvr_deduct_point(getDouble(obj, "deductPoint", 0.0));
+				policyTable.setOvr_max_deduct(getDouble(obj, "maxDeduct", 0.0));
 			}
 
 			obj = new Gson().fromJson(policy.get("overloading"), JsonObject.class);
-			if (obj.get("state").getAsBoolean()) {
-				policyTable.setOverloading(new Gson().fromJson(obj.get("required"), new TypeToken<ArrayList<String>>() {
-				}.getType()));
-				policyTable.setOvl_deduct_point(obj.get("deductPoint").getAsDouble());
-				policyTable.setOvl_max_deduct(obj.get("maxDeduct").getAsDouble());
+			if (getBoolean(obj, "state", false)) {
+				policyTable.setOverloading(getList(obj, "required", new TypeToken<ArrayList<String>>(){}));
+				policyTable.setOvl_deduct_point(getDouble(obj, "deductPoint", 0.0));
+				policyTable.setOvl_max_deduct(getDouble(obj, "maxDeduct", 0.0));
 			}
 
 			obj = new Gson().fromJson(policy.get("thread"), JsonObject.class);
-			if (obj.get("state").getAsBoolean()) {
+			if (getBoolean(obj, "state", false)) {
 				policyTable.setThreads(true);
-				policyTable.setThr_deduct_point(obj.get("deductPoint").getAsDouble());
+				policyTable.setThr_deduct_point(getDouble(obj, "deductPoint", 0.0));
 			}
 
 			obj = new Gson().fromJson(policy.get("javadoc"), JsonObject.class);
-			if (obj.get("state").getAsBoolean()) {
+			if (getBoolean(obj, "state", false)) {
 				policyTable.setJavadoc(true);
-				policyTable.setJvd_deduct_point(obj.get("deductPoint").getAsDouble());
+				policyTable.setJvd_deduct_point(getDouble(obj, "deductPoint", 0.0));
 			}
 
 			obj = new Gson().fromJson(policy.get("encapsulation"), JsonObject.class);
-			if (obj.get("state").getAsBoolean()) {
+			if (getBoolean(obj, "state", false)) {
 				policyTable.setEncaps(true);
-				policyTable.setEnc_deduct_point(obj.get("deductPoint").getAsDouble());
+				policyTable.setEnc_deduct_point(getDouble(obj, "deductPoint", 0.0));
 			}
 
 			obj = new Gson().fromJson(policy.get("count"), JsonObject.class);
-			if (obj.get("state").getAsBoolean()) {
+			if (getBoolean(obj, "state", false)) {
 				policyTable.setCount(true);
-				policyTable.setMethodCount(obj.get("methodCount").getAsInt());
-				policyTable.setFieldCount(obj.get("fieldCount").getAsInt());
-				policyTable.setEnForCount(obj.get("enForCount").getAsInt());
-				policyTable.setCnt_deduct_point(obj.get("deductPoint").getAsDouble());
+				policyTable.setMethodCount(getInt(obj, "methodCount", 0));
+				policyTable.setFieldCount(getInt(obj, "fieldCount", 0));
+				policyTable.setEnForCount(getInt(obj, "enForCount", 0));
+				policyTable.setCnt_deduct_point(getDouble(obj, "deductPoint", 0.0));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
+	}
+
+	/**
+	 * Reads a boolean value safely from a policy JSON object
+	 * @param obj policy data Json Object
+	 * @param key key field name to read
+	 * @param defaultValue default value used when the field is missing or invalid
+	 * @return
+	 */
+	private boolean getBoolean(JsonObject obj, String key, boolean defaultValue) {
+		if (obj == null || !obj.has(key) || obj.get(key).isJsonNull()) {
+			return defaultValue;
+
+		}
+		try {
+			return obj.get(key).getAsBoolean();
+		} catch (Exception e) {
+			return defaultValue;
+		}
+	}
+
+	/**
+	 * Reads a double value safely from a policy JSON object
+	 * @param obj policy data Json Object
+	 * @param key key field name to read
+	 * @param defaultValue default value used when the field is missing or invalid
+	 * @return
+	 */
+	private double getDouble(JsonObject obj, String key, double defaultValue) {
+		if (obj == null || !obj.has(key) || obj.get(key).isJsonNull()) {
+			return defaultValue;
+
+		}
+		try {
+			return obj.get(key).getAsDouble();
+		} catch (Exception e) {
+			return defaultValue;
+		}
+	}
+
+	/**
+	 * Reads an int value safely from a policy JSON object
+	 * @param obj policy data Json Object
+	 * @param key key field name to read
+	 * @param defaultValue default value used when the field is missing or invalid
+	 * @return
+	 */
+	private int getInt(JsonObject obj, String key, int defaultValue) {
+		if (obj == null || !obj.has(key) || obj.get(key).isJsonNull()) {
+			return defaultValue;
+
+		}
+		try {
+			return obj.get(key).getAsInt();
+		} catch (Exception e) {
+			return defaultValue;
+		}
+	}
+
+	/**
+	 * Reads a list value safely from a policy JSON object
+	 * @param obj policy data Json Object
+	 * @param key key field name to read
+	 * @param type list an element type
+	 * @return
+	 * @param <T> list an element type
+	 */
+	private <T> ArrayList<T> getList(JsonObject obj, String key, TypeToken<ArrayList<T>> type) {
+		if (obj == null || !obj.has(key) || obj.get(key).isJsonNull()) {
+			return new ArrayList<>();
+
+		}
+		try {
+			return new Gson().fromJson(obj.get(key), type.getType());
+		} catch (Exception e) {
+			return new ArrayList<>();
+		}
 	}
 }

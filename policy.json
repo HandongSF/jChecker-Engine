@@ -1,0 +1,47 @@
+{
+  "token": "example-token",
+  "itoken": "example-itoken",
+  "className": "Main",
+  "instructor": "InstructorName",
+  "point": 10.0,
+  "feedback": true,
+  "dueDate": "2025-08-31 23:59:59",
+  "feedbackLevel": 1,
+
+  "compiled": {
+    "state": true,
+    "buildTool": false,
+    "deductPoint": 0.0
+  },
+
+  "oracle": {
+    "state": true,
+    "input": [""],
+    "checksum": [""],
+    "output": ["Hello World"],
+    "deductPoint": 10.0,
+    "maxDeduct": 10.0,
+    "filePath": ["Main.java"]
+  },
+
+  "packages": { "state": false },
+
+  "classes": {
+    "state": true,
+    "required": ["Main"],
+    "deductPoint": 0.0,
+    "maxDeduct": 0.0
+  },
+
+  "methods": { "state": false },
+  "customException": { "state": false },
+  "customStructure": { "state": false },
+  "inheritSuper": { "state": false },
+  "inheritInterface": { "state": false },
+  "overriding": { "state": false },
+  "overloading": { "state": false },
+  "thread": { "state": false },
+  "javadoc": { "state": false },
+  "encapsulation": { "state": false },
+  "count": { "state": false }
+}
